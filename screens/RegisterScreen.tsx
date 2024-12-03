@@ -4,14 +4,35 @@ import {
   TextInput,
   View,
   TouchableOpacity,
+  Keyboard,
 } from "react-native";
 import { SafeAreaView } from "react-native";
-import { type StackNavigation } from "@/app";
+import { type StackNavigation } from "@/navigation/AppNavigator";
 import { useNavigation } from "@react-navigation/native";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import Loading from "@/components/Loading";
+
+interface FormRegisterData {
+  email: string;
+  username: String;
+  password: string;
+}
 
 const RegisterScreen = () => {
   const { goBack } = useNavigation<StackNavigation>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormRegisterData>();
+  const [loading, setLoading] = useState(false);
 
+  const onSubmit: SubmitHandler<FormRegisterData> = (data) => {
+    console.log("Register", data);
+    setLoading(true);
+    Keyboard.dismiss();
+  };
   const navigateBack = () => goBack();
 
   return (
@@ -24,24 +45,83 @@ const RegisterScreen = () => {
         <Text style={styles.infoText}>
           Create your account first to connect with us
         </Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder={"Email Address"}
-          inputMode={"email"}
-          placeholderTextColor={"#A6A6A6"}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Enter a valid email address",
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.textInput}
+              placeholder={"Email Address"}
+              inputMode={"email"}
+              placeholderTextColor={"#A6A6A6"}
+            />
+          )}
+          name="email"
         />
-        <TextInput
-          style={styles.textInput}
-          placeholder={"Username"}
-          placeholderTextColor={"#A6A6A6"}
+        {errors.email && (
+          <Text style={styles.errorMessage}>{errors.email.message}</Text>
+        )}
+        <Controller
+          control={control}
+          rules={{
+            required: {
+              value: true,
+              message: "Username must be fill out",
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value as string}
+              style={styles.textInput}
+              placeholder={"Username"}
+              placeholderTextColor={"#A6A6A6"}
+            />
+          )}
+          name="username"
         />
-        <TextInput
-          style={styles.textInput}
-          placeholder={"Password"}
-          placeholderTextColor={"#A6A6A6"}
-          secureTextEntry={true}
+        {errors.username && (
+          <Text style={styles.errorMessage}>{errors.username.message}</Text>
+        )}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={styles.textInput}
+              placeholder={"Password"}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholderTextColor={"#A6A6A6"}
+              secureTextEntry={true}
+            />
+          )}
+          name="password"
         />
-        <TouchableOpacity style={styles.button}>
+        {errors.password && (
+          <Text style={styles.errorMessage}>{errors.password.message}</Text>
+        )}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSubmit(onSubmit)}
+        >
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
         <View style={styles.containerRow}>
@@ -51,6 +131,7 @@ const RegisterScreen = () => {
           </Text>
         </View>
       </View>
+      {loading && <Loading />}
     </SafeAreaView>
   );
 };
@@ -136,6 +217,11 @@ const styles = StyleSheet.create({
     color: "#70C1B3",
     fontWeight: "bold",
     textDecorationLine: "underline",
+  },
+  errorMessage: {
+    fontSize: 12,
+    color: "#FF6B6B",
+    marginBottom: 16,
   },
 });
 
