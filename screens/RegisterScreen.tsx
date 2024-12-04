@@ -10,14 +10,10 @@ import { SafeAreaView } from "react-native";
 import { type StackNavigation } from "@/navigation/AppNavigator";
 import { useNavigation } from "@react-navigation/native";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
 import Loading from "@/components/Loading";
-
-interface FormRegisterData {
-  email: string;
-  username: String;
-  password: string;
-}
+import { RegisterRequest } from "@/model/registerModel";
+import { useUserRegisterMutation } from "@/services/story";
+import { showToast } from "@/utils/toast";
 
 const RegisterScreen = () => {
   const { goBack } = useNavigation<StackNavigation>();
@@ -25,13 +21,28 @@ const RegisterScreen = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormRegisterData>();
-  const [loading, setLoading] = useState(false);
+  } = useForm<RegisterRequest>();
 
-  const onSubmit: SubmitHandler<FormRegisterData> = (data) => {
-    console.log("Register", data);
-    setLoading(true);
+  const [registerUser, { isLoading }] = useUserRegisterMutation();
+
+  const onSubmit: SubmitHandler<RegisterRequest> = async (data) => {
+    console.log(data);
     Keyboard.dismiss();
+    try {
+      await registerUser(data).unwrap();
+      showToast("Registration success");
+      navigateBack();
+    } catch (err: any) {
+      if (err.data) {
+        showToast(
+          `Error: ${err.data.message || "An unexpected error occurred"}`
+        );
+      } else if (err.message) {
+        showToast(`Error: ${err.message}`);
+      } else {
+        showToast("An unknown error occurred.");
+      }
+    }
   };
   const navigateBack = () => goBack();
 
@@ -88,10 +99,10 @@ const RegisterScreen = () => {
               placeholderTextColor={"#A6A6A6"}
             />
           )}
-          name="username"
+          name="name"
         />
-        {errors.username && (
-          <Text style={styles.errorMessage}>{errors.username.message}</Text>
+        {errors.name && (
+          <Text style={styles.errorMessage}>{errors.name.message}</Text>
         )}
         <Controller
           control={control}
@@ -131,7 +142,7 @@ const RegisterScreen = () => {
           </Text>
         </View>
       </View>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
     </SafeAreaView>
   );
 };

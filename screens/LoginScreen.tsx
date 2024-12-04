@@ -10,13 +10,10 @@ import {
 import { SafeAreaView } from "react-native";
 import { type StackNavigation } from "@/navigation/AppNavigator";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { useState } from "react";
 import Loading from "@/components/Loading";
-
-type FormLoginData = {
-  email: string;
-  password: string;
-};
+import { useUserLoginMutation } from "@/services/story";
+import { LoginRequest } from "@/model/loginModel";
+import { showToast } from "@/utils/toast";
 
 const LoginScreen = () => {
   const { navigate } = useNavigation<StackNavigation>();
@@ -24,13 +21,26 @@ const LoginScreen = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormLoginData>();
-  const [loading, setLoading] = useState(false);
+  } = useForm<LoginRequest>();
+  const [loginUser, { isLoading }] = useUserLoginMutation();
 
-  const onSubmit: SubmitHandler<FormLoginData> = (data) => {
-    console.log("Form Data:", data);
-    setLoading(true);
+  const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
     Keyboard.dismiss();
+    try {
+      const response = await loginUser(data).unwrap();
+      showToast(`Your token : ${response.loginResult.token}`);
+    } catch (err: any) {
+      if (err.data) {
+        showToast(
+          `Error: ${err.data.message || "An unexpected error occurred"}`
+        );
+      } else if (err.message) {
+        showToast(`Error: ${err.message}`);
+      } else {
+        showToast("An unknown error occurred.");
+      }
+      console.log("ERROR : ", err);
+    }
   };
   const navigateToRegister = () => navigate("Register");
 
@@ -113,7 +123,7 @@ const LoginScreen = () => {
         </View>
       </View>
 
-      {loading && <Loading />}
+      {isLoading && <Loading />}
     </SafeAreaView>
   );
 };
