@@ -14,9 +14,10 @@ import Loading from "@/components/Loading";
 import { useUserLoginMutation } from "@/services/story";
 import { LoginRequest } from "@/model/loginModel";
 import { showToast } from "@/utils/toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = () => {
-  const { navigate } = useNavigation<StackNavigation>();
+  const { navigate, reset } = useNavigation<StackNavigation>();
   const {
     control,
     handleSubmit,
@@ -24,11 +25,32 @@ const LoginScreen = () => {
   } = useForm<LoginRequest>();
   const [loginUser, { isLoading }] = useUserLoginMutation();
 
+  const storeUsername = async (username: string) => {
+    try {
+      await AsyncStorage.setItem("username", username);
+    } catch (err: any) {
+      console.error(err.toString());
+    }
+  };
+
+  const storeToken = async (token: string) => {
+    try {
+      await AsyncStorage.setItem("token", token);
+      reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
+    } catch (err: any) {
+      showToast(err.toString());
+    }
+  };
+
   const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
     Keyboard.dismiss();
     try {
       const response = await loginUser(data).unwrap();
-      showToast(`Your token : ${response.loginResult.token}`);
+      storeUsername(response.loginResult.name);
+      storeToken(response.loginResult.token);
     } catch (err: any) {
       if (err.data) {
         showToast(

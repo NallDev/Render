@@ -4,8 +4,9 @@ import LoginScreen from "@/screens/LoginScreen";
 import RegisterScreen from "@/screens/RegisterScreen";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
+import HomeScreen from "@/screens/HomeScreen";
 
-export type ScreenNames = ["Login", "Register"];
+export type ScreenNames = ["Login", "Register", "Home"];
 export type RootStackParamList = Record<ScreenNames[number], undefined>;
 export type StackNavigation = NavigationProp<RootStackParamList>;
 
@@ -23,6 +24,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
