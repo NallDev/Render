@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { BaseQueryFn } from "@reduxjs/toolkit/query";
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosError } from "axios";
@@ -18,13 +19,25 @@ const axiosBaseQuery =
   > =>
   async ({ url, method, data, params, headers }) => {
     try {
+      const token = await AsyncStorage.getItem("token");
+
+      const authHeaders = {
+        ...(headers || {}),
+        Authorization: token ? `Bearer ${token}` : undefined,
+      };
+
       const result = await axios({
         url: baseUrl + url,
         method,
         data,
         params,
-        headers,
+        headers: authHeaders,
       });
+
+      console.log(
+        `Base URL : ${baseUrl + url + " " + params.page + " " + params.size}`
+      );
+
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;
