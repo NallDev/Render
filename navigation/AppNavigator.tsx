@@ -7,8 +7,9 @@ import HomeScreen from "@/screens/HomeScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
+import PickImageScreen from "@/screens/PickImageScreen";
 
-export type ScreenNames = "Login" | "Register" | "Home";
+export type ScreenNames = "Login" | "Register" | "Home" | "PickImage";
 export type RootStackParamList = Record<ScreenNames, undefined>;
 export type StackNavigation = NavigationProp<RootStackParamList>;
 
@@ -45,6 +46,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PickImage"
+          component={PickImageScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

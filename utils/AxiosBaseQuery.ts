@@ -34,10 +34,6 @@ const axiosBaseQuery =
         headers: authHeaders,
       });
 
-      console.log(
-        `Base URL : ${baseUrl + url + " " + params.page + " " + params.size}`
-      );
-
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;

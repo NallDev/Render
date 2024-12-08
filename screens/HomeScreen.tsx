@@ -27,7 +27,7 @@ const HomeScreen = () => {
   });
   const [listStory, setListStory] = useState<ListStory[]>([]);
   const [username, setUsername] = useState("");
-  const { reset } = useNavigation<StackNavigation>();
+  const { navigate, reset } = useNavigation<StackNavigation>();
 
   console.log(data?.listStory.length);
 
@@ -54,6 +54,8 @@ const HomeScreen = () => {
       showToast(err.toString());
     }
   };
+
+  const navigateToPickImage = () => navigate("PickImage");
 
   useEffect(() => {
     const getUsernameLocal = async () => {
@@ -142,7 +144,7 @@ const HomeScreen = () => {
       />
       {listStory.length === 0 && <EmptyText text="No Content Availbale" />}
 
-      <TouchableOpacity style={styles.fab}>
+      <TouchableOpacity style={styles.fab} onPress={navigateToPickImage}>
         <Image
           style={{ height: 20, resizeMode: "contain" }}
           source={require("@/assets/images/camera-icon.png")}
