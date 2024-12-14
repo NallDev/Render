@@ -1,3 +1,4 @@
+import { AddStoryRequest, AddStoryResponse } from "@/model/AddStoryModel";
 import { LoginRequest, LoginResponse } from "@/model/loginModel";
 import { RegisterRequest, RegisterResponse } from "@/model/registerModel";
 import { GetStoriesParams, StoriesResponse } from "@/model/StoriesModel";
@@ -41,6 +42,24 @@ export const storyApi = createApi({
         },
         keepUnusedDataFor: 0,
       }),
+      addStory: build.mutation<AddStoryResponse, AddStoryRequest>({
+        query: (body) => {
+          const formData = new FormData();
+          formData.append("description", body.description);
+          formData.append("photo", body.photo);
+          if (body.lat !== undefined) formData.append("lat", String(body.lat));
+          if (body.lon !== undefined) formData.append("lon", String(body.lon));
+
+          return {
+            url: "/stories",
+            method: "post",
+            data: formData,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          };
+        },
+      }),
     };
   },
 });
@@ -49,4 +68,5 @@ export const {
   useUserRegisterMutation,
   useUserLoginMutation,
   useGetStoriesQuery,
+  useAddStoryMutation,
 } = storyApi;

@@ -16,12 +16,15 @@ import {
   Image,
 } from "react-native";
 import * as FileSystem from "expo-file-system";
+import { useNavigation } from "expo-router";
+import { StackNavigation } from "@/navigation/AppNavigator";
 
 const PickImageScreen = () => {
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [cameraReady, setCameraReady] = useState(false);
   const cameraRef = useRef<CameraView | null>(null);
+  const { navigate } = useNavigation<StackNavigation>();
 
   if (!permission) {
     return <View />;
@@ -71,7 +74,9 @@ const PickImageScreen = () => {
           to: permanentUri,
         });
 
-        showToast(`Saved to ${permanentUri}`);
+        navigate("PostStoryScreen", {
+          uri: permanentUri,
+        });
       } else {
         showToast("Failed to capture the picture.");
       }
@@ -89,11 +94,6 @@ const PickImageScreen = () => {
         facing={facing}
         onCameraReady={() => setCameraReady(true)}
       >
-        {/* <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={takePicture}>
-            <Text style={styles.text}>Take Picture</Text>
-          </TouchableOpacity>
-        </View> */}
         <View style={styles.buttonSection}>
           <TouchableOpacity
             style={[styles.headerButton, { backgroundColor: "#E9EBFE" }]}
@@ -103,11 +103,17 @@ const PickImageScreen = () => {
               source={require("@/assets/images/gallery-icon.png")}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={takePicture}
-            style={[styles.headerButton, { backgroundColor: "#E9EBFE" }]}
-          >
+          <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
             <View style={styles.circle} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.headerButton, { backgroundColor: "#E9EBFE" }]}
+            onPress={toggleCameraFacing}
+          >
+            <Image
+              style={styles.headerButtonIcon}
+              source={require("@/assets/images/swap-icon.png")}
+            />
           </TouchableOpacity>
         </View>
       </CameraView>
@@ -126,6 +132,7 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+    justifyContent: "flex-end",
   },
   buttonContainer: {
     flex: 1,
@@ -151,21 +158,31 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginStart: 12,
   },
+  captureButton: {
+    backgroundColor: "#E9EBFE",
+    borderRadius: "50%",
+    height: 72,
+    width: 72,
+    alignItems: "center",
+    justifyContent: "center",
+    marginStart: 12,
+  },
   headerButtonIcon: {
     height: 24,
     width: 24,
   },
   circle: {
-    height: 24,
-    width: 24,
+    height: 56,
+    width: 56,
     backgroundColor: "#5265FF",
     borderRadius: "50%",
   },
   buttonSection: {
-    position: "absolute",
-    bottom: 0,
     width: "100%",
-    justifyContent: "center",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginBottom: 40,
   },
 });
 

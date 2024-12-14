@@ -26,7 +26,6 @@ const RegisterScreen = () => {
   const [registerUser, { isLoading }] = useUserRegisterMutation();
 
   const onSubmit: SubmitHandler<RegisterRequest> = async (data) => {
-    console.log(data);
     Keyboard.dismiss();
     try {
       await registerUser(data).unwrap();

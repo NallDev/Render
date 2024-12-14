@@ -38,7 +38,7 @@ const LoginScreen = () => {
       await AsyncStorage.setItem("token", token);
       reset({
         index: 0,
-        routes: [{ name: "Home" }],
+        routes: [{ name: "HomeScreen" }],
       });
     } catch (err: any) {
       showToast(err.toString());
@@ -64,7 +64,7 @@ const LoginScreen = () => {
       console.log("ERROR : ", err);
     }
   };
-  const navigateToRegister = () => navigate("Register");
+  const navigateToRegister = () => navigate("RegisterScreen");
 
   return (
     <SafeAreaView style={styles.container}>

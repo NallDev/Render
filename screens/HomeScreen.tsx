@@ -29,8 +29,6 @@ const HomeScreen = () => {
   const [username, setUsername] = useState("");
   const { navigate, reset } = useNavigation<StackNavigation>();
 
-  console.log(data?.listStory.length);
-
   const loadMore = () => {
     if (!isFetching && data?.listStory?.length) {
       setPage((prevPage) => prevPage + 1);
@@ -48,14 +46,14 @@ const HomeScreen = () => {
       await AsyncStorage.clear();
       reset({
         index: 0,
-        routes: [{ name: "Login" }],
+        routes: [{ name: "LoginScreen" }],
       });
     } catch (err: any) {
       showToast(err.toString());
     }
   };
 
-  const navigateToPickImage = () => navigate("PickImage");
+  const navigateToPickImage = () => navigate("PickImageScreen");
 
   useEffect(() => {
     const getUsernameLocal = async () => {
@@ -63,6 +61,7 @@ const HomeScreen = () => {
       setUsername(username ? username : "Who am i?");
     };
     getUsernameLocal();
+    handleRefresh();
   }, []);
 
   useEffect(() => {
@@ -142,7 +141,9 @@ const HomeScreen = () => {
         refreshing={refreshing}
         onRefresh={handleRefresh}
       />
-      {listStory.length === 0 && <EmptyText text="No Content Availbale" />}
+      {listStory.length === 0 && !isFetching && (
+        <EmptyText text="No Content Availbale" />
+      )}
 
       <TouchableOpacity style={styles.fab} onPress={navigateToPickImage}>
         <Image
