@@ -9,6 +9,8 @@ import { store } from "@/redux/store";
 import PickImageScreen from "@/screens/PickImageScreen";
 import PostStoryScreen from "@/screens/PostStoryScreen";
 import { NavigationProp } from "@react-navigation/native";
+import { ListStory } from "@/model/StoriesModel";
+import DetailScreen from "@/screens/DetailScreen";
 
 export type RootStackParamList = {
   LoginScreen: undefined;
@@ -16,6 +18,7 @@ export type RootStackParamList = {
   HomeScreen: undefined;
   PickImageScreen: undefined;
   PostStoryScreen: { uri: string };
+  DetailScreen: ListStory;
 };
 export type StackNavigation = NavigationProp<RootStackParamList>;
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -65,6 +68,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="PostStoryScreen"
           component={PostStoryScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="DetailScreen"
+          component={DetailScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -130,6 +130,9 @@ const HomeScreen = () => {
             name={item.name}
             description={item.description}
             photoUrl={item.photoUrl}
+            onStoryPress={() => {
+              navigate("DetailScreen", item);
+            }}
           />
         )}
         keyExtractor={(item) => item.id}

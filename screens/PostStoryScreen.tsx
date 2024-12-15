@@ -4,7 +4,6 @@ import { RootStackParamList, StackNavigation } from "@/navigation/AppNavigator";
 import { useAddStoryMutation } from "@/services/story";
 import { showToast } from "@/utils/toast";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
   SafeAreaView,

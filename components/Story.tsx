@@ -1,34 +1,38 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const Story = ({
   name,
   description,
   photoUrl,
+  onStoryPress,
 }: {
   name: string;
   description: string;
   photoUrl: string;
+  onStoryPress: () => void;
 }) => {
   return (
-    <View style={styles.card}>
-      <Image
-        style={styles.image}
-        source={require("@/assets/images/person-icon.png")}
-      />
-      <View style={styles.content}>
-        <Text style={styles.textName} numberOfLines={2} ellipsizeMode="tail">
-          {name}
-        </Text>
-        <Text
-          style={styles.textDescription}
-          numberOfLines={3}
-          ellipsizeMode="tail"
-        >
-          {description}
-        </Text>
-        <Image style={styles.contentImage} source={{ uri: photoUrl }} />
+    <TouchableOpacity onPress={onStoryPress}>
+      <View style={styles.card}>
+        <Image
+          style={styles.image}
+          source={require("@/assets/images/person-icon.png")}
+        />
+        <View style={styles.content}>
+          <Text style={styles.textName} numberOfLines={2} ellipsizeMode="tail">
+            {name}
+          </Text>
+          <Text
+            style={styles.textDescription}
+            numberOfLines={3}
+            ellipsizeMode="tail"
+          >
+            {description}
+          </Text>
+          <Image style={styles.contentImage} source={{ uri: photoUrl }} />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
