@@ -2,28 +2,29 @@ import { AddStoryRequest, AddStoryResponse } from "@/model/AddStoryModel";
 import { LoginRequest, LoginResponse } from "@/model/loginModel";
 import { RegisterRequest, RegisterResponse } from "@/model/registerModel";
 import { GetStoriesParams, StoriesResponse } from "@/model/StoriesModel";
-import axiosBaseQuery from "@/utils/AxiosBaseQuery";
+import { baseService } from "@/utils/_base-query";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 export const storyApi = createApi({
   reducerPath: "storyApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: "https://story-api.dicoding.dev/v1",
-  }),
+  baseQuery: baseService,
   endpoints(build) {
     return {
       userRegister: build.mutation<RegisterResponse, RegisterRequest>({
-        query: (body) => ({
-          url: "/register",
-          method: "post",
-          data: body,
-        }),
+        query: (body) => {
+          console.log("liat lognya ", body);
+          return {
+            url: "/register",
+            method: "post",
+            body: body,
+          };
+        },
       }),
       userLogin: build.mutation<LoginResponse, LoginRequest>({
         query: (body) => ({
           url: "/login",
           method: "post",
-          data: body,
+          body: body,
         }),
       }),
       getStories: build.query<StoriesResponse, GetStoriesParams>({
@@ -53,10 +54,7 @@ export const storyApi = createApi({
           return {
             url: "/stories",
             method: "post",
-            data: formData,
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
+            body: formData,
           };
         },
       }),
